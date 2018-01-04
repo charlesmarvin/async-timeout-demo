@@ -22,6 +22,6 @@ public class ServerService {
   public String submit(@RequestBody RequestDTO data) throws Exception {
     LOG.info("data: {}", data);
     Thread.sleep(data.getDelay());
-    return String.format("Slept for %d ms", data.getDelay());
+    return "Done";
   }
 }
