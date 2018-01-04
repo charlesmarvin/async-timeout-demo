@@ -16,9 +16,13 @@ Run Server:
 
 Call Client API:
 
-`curl -d '{"delay": <DELAY_IN_MILLIS>}' -H "Content-Type: application/json" -X POST http://localhost:8000`
+`> curl -d '{"delay": <DELAY_IN_MILLIS>}' -H "Content-Type: application/json" -X POST http://localhost:8000`
 
 `DELAY_IN_MILLIS` should be the latency you want to simulate. 
 Requests will time out in `5000 ms` by default. 
 If you set a delay greater than `5000` the request will return "Processing" and continue processing in the background.
-If you set the delay less than `5000` then the request will return "Done" 
+If you set the delay less than `5000` then the request will return "Done"
+
+Run some benchmarking using Apache HTTP server benchmarking tool (because why not?)
+`> echo '{"delay": <DELAY_IN_MILLIS>}' > input.json`
+`> ab -n 1000 -c 100 -p input.json -T 'application/json' http://localhost:8000/` 
