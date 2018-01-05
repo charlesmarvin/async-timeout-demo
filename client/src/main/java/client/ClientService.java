@@ -2,6 +2,8 @@ package client;
 
 import data.RequestDTO;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ public class ClientService {
 
   @Autowired
   private RestTemplate restTemplate;
+  private final Executor executor = Executors.newCachedThreadPool();
 
   public static void main(String[] args) {
     SpringApplication.run(ClientService.class, args);
@@ -37,7 +40,7 @@ public class ClientService {
 
   @PostMapping
   public DeferredResult<String> submit(@RequestBody RequestDTO data) {
-    LOG.info("data: {}", data);
+    LOG.debug("Handling request with data: {}", data);
     DeferredResult<String> deferredResult = new DeferredResult<>();
     CompletableFuture.runAsync(() -> {
           String result = restTemplate.postForObject("http://localhost:8001/", data, String.class);
@@ -46,7 +49,7 @@ public class ClientService {
           } else {
             LOG.info("Adding result '{}' to queue", result);
           }
-        }
+        }, executor
     ).exceptionally(e -> {
       if (!deferredResult.hasResult()) {
         deferredResult.setResult("Processing");
